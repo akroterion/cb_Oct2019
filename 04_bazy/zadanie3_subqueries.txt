@@ -1,0 +1,35 @@
+zad5:
+SELECT *, MAX(ilosc) FROM
+(
+	SELECT 
+		users.ID, users.name, users.surname,
+		strftime('%Y', borrowings.borrow_date) AS year,
+		COUNT(strftime('%Y', borrowings.borrow_date)) as ilosc
+	FROM users
+	JOIN borrowings ON borrowings.user_id = users.ID
+	GROUP BY users.ID, year
+	ORDER BY users.ID
+)
+GROUP BY ID
+
+zad6:
+SELECT ID, obciazenie - IFNULL(kara, 0) AS dlug FROM
+(
+    SELECT
+        users.ID,
+        MAX(
+            SUM(
+                julianday(IFNULL(borrowings.return_date, 'now')) -
+                julianday(borrowings.borrow_date) - 25
+            ) * 0.5,
+            0
+        ) AS obciazenie,
+        (
+            SELECT SUM(fines.fine) FROM fines
+            WHERE fines.user_id = users.ID
+        ) AS kara
+    FROM users
+    LEFT JOIN borrowings ON users.ID = borrowings.user_id
+    GROUP BY users.ID
+)
+WHERE dlug > 0
