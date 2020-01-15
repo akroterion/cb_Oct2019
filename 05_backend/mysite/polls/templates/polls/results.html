@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <p>Opublikowano: {{ question.pub_date|date:"Y-m-d H:i" }}</p>
+    <p>Opcje wyboru:</p>
+    {% if question.choice_set %}
+    <ul>
+        {% for choice in question.choice_set.all %}
+        <li>{{ choice.choice_text }} &mdash; głosy: {{ choice.votes }}</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>Brak wyboru :(</p>
+    {% endif %}
+{% endblock %}

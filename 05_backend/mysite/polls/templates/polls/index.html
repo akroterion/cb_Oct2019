@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <p>Dostępne ankiety:</p>
+    {% if questions %}
+    <ul>
+        {% for q in questions %}
+        <li><a href="{% url 'details' q.pk %}">{{ q.question_text }}</a></li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>Brak ankiet :(</p>
+    {% endif %}
+{% endblock %}
