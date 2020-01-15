@@ -1,0 +1,39 @@
+zad1
+
+SELECT * FROM dane;
+
+zad2
+
+SELECT * FROM dane
+WHERE Author_name = "Stanisław" AND Author_surname = "Lem"
+
+zad3
+
+SELECT * FROM dane
+WHERE Registration_date >= "2015-01-01" AND Registration_date < "2016-01-01"
+
+zad4
+
+SELECT COUNT(ID) FROM dane
+
+zad5
+
+SELECT DISTINCT Author_surname FROM dane
+SELECT DISTINCT (Author_name || Author_surname) AS autor FROM dane
+SELECT COUNT(DISTINCT Author_surname) FROM dane
+
+zad6
+
+SELECT COUNT(id), Author_surname FROM dane
+GROUP BY Author_surname
+
+zad7
+
+SELECT * FROM dane
+WHERE Registration_date <= Date('now', '-10 years')
+ORDER BY Registration_date DESC
+
+zad8
+
+SELECT COUNT(DISTINCT title), Author_surname FROM dane
+GROUP BY Author_surname

@@ -1,0 +1,360 @@
+zad1:
+SELECT COUNT(id) FROM users;
+
+zad2:
+(wersja "zarejestrowanych w 2017")
+SELECT COUNT(ID) from users where registration_date >= "2017-01-01" AND registration_date < "2018-01-01"
+
+zad3:
+
+SELECT users.*, count(borrowings.id) as 'liczba_wypozyczen' FROM users
+JOIN borrowings ON borrowings.user_id = users.ID
+GROUP BY users.id
+
+SELECT COUNT(borrowings.ID) as liczba_wypozyczen, users.name, users.surname FROM borrowings
+JOIN users ON borrowings.user_id = users.ID
+GROUP BY user_id
+ORDER BY liczba_wypozyczen DESC
+LIMIT 1
+
+
+zad4:
+
+SELECT users.*, count(borrowings.id) as 'liczba_wypozyczen' FROM users
+JOIN borrowings ON borrowings.user_id = users.ID
+WHERE borrowings.borrow_date >= "2017-01-01" AND borrowings.borrow_date < "2018-01-01"
+GROUP BY users.id
+
+
+zad5:
+
+SELECT
+    users.surname, users.name,
+    count(borrowings.id) as 'liczba_wypozyczen'
+FROM users
+JOIN borrowings ON borrowings.user_id = users.ID
+WHERE
+    borrowings.borrow_date >= "2010-01-01" AND
+    borrowings.borrow_date < "2011-01-01"
+GROUP BY users.id
+HAVING liczba_wypozyczen > 3
+ORDER BY liczba_wypozyczen DESC
+
+
+zad6:
+
+SELECT
+    books.ID,
+    titles.title,
+    COUNT(borrowings.ID) as 'liczba_wypozyczen'
+FROM books
+JOIN borrowings ON books.ID = borrowings.book_id
+JOIN titles ON books.title_id = titles.ID
+GROUP BY books.ID
+ORDER BY liczba_wypozyczen DESC
+
+
+zad7:
+
+SELECT
+    titles.title,
+    COUNT(borrowings.ID) as 'liczba_wypozyczen'
+FROM books
+JOIN borrowings ON books.ID = borrowings.book_id
+JOIN titles ON books.title_id = titles.ID
+GROUP BY books.title_id
+ORDER BY liczba_wypozyczen DESC
+
+
+zad8:
+
+SELECT titles.*, count(borrowings.ID) FROM books
+JOIN borrowings ON borrowings.book_id = books.id
+JOIN titles ON titles.id = books.title_id
+GROUP BY books.title_id
+
+
+zad9:
+
+SELECT titles.*, count(borrowings.id) as 'liczba_wypozyczen' FROM books
+JOIN borrowings ON borrowings.user_id = books.ID
+JOIN titles ON titles.id = books.title_id
+WHERE borrowings.borrow_date >= "2017-01-01" AND borrowings.borrow_date < "2018-01-01"
+GROUP BY books.title_id
+ORDER BY liczba_wypozyczen DESC
+LIMIT 10
+
+SELECT COUNT(borrowings.ID) AS liczba_wypozyczen, titles.title FROM books
+JOIN borrowings ON borrowings.book_id = books.ID
+JOIN titles ON books.title_id = titles.ID
+WHERE borrowings.borrow_date LIKE "2016%"
+GROUP BY books.title_id
+ORDER BY liczba_wypozyczen DESC
+LIMIT 10
+
+
+zad10:
+
+SELECT
+    titles.title, books.ID,
+    users.name, users.surname,
+    date(borrowings.borrow_date, '+25 days') as 'exp_ret_date'
+FROM books
+JOIN titles ON titles.ID = books.title_id
+JOIN borrowings ON borrowings.book_id = books.ID
+JOIN users ON borrowings.user_id = users.ID
+WHERE return_date > exp_ret_date
+
+
+zad11:
+
+SELECT
+    titles.title, books.ID, users.name, users.surname,
+    date(borrowings.borrow_date, '+25 days') as 'exp_ret_date',
+    return_date,
+    julianday(return_date) - julianday(date(borrowings.borrow_date, '+25 days')) as 'days_over' FROM books
+JOIN titles ON titles.ID = books.title_id
+JOIN borrowings ON borrowings.book_id = books.ID
+JOIN users ON borrowings.user_id = users.ID
+WHERE return_date > exp_ret_date
+
+
+zad12:
+
+SELECT titles.title, books.ID, users.name, users.surname, borrow_date, return_date FROM books
+JOIN titles ON titles.ID = books.title_id
+JOIN borrowings ON borrowings.book_id = books.ID
+JOIN users ON borrowings.user_id = users.ID
+WHERE return_date IS NULL
+
+SELECT
+    titles.title, books.ID, users.name, users.surname,
+    borrowings.borrow_date, borrowings.return_date,
+    date(borrowings.borrow_date, '+25 days') as 'exp_return_date',
+    julianday(date('now')) -
+        julianday(date(borrowings.borrow_date, '+25 days'))
+        AS 'dni_po_terminie'
+FROM books
+JOIN titles ON titles.ID = books.title_id
+JOIN borrowings ON borrowings.book_id = books.ID
+JOIN users ON users.ID = borrowings.user_id
+WHERE borrowings.return_date IS NULL
+ORDER BY dni_po_terminie DESC
+
+
+zad13:
+
+SELECT
+    titles.title, books.ID, users.name, users.surname,
+    date(borrowings.borrow_date, '+25 days') as 'exp_ret_date',
+    return_date,
+    julianday(return_date) - julianday(date(borrowings.borrow_date, '+25 days')) as 'days_over' FROM books
+JOIN titles ON titles.ID = books.title_id
+JOIN borrowings ON borrowings.book_id = books.ID
+JOIN users ON borrowings.user_id = users.ID
+WHERE return_date > exp_ret_date
+ORDER BY days_over DESC
+LIMIT 20
+
+SELECT
+    titles.title, books.ID, users.name, users.surname,
+    date(borrowings.borrow_date, '+25 days') as 'exp_ret_date',
+    return_date,
+    julianday(return_date) -
+        julianday(date(borrowings.borrow_date, '+25 days')) as 'days_over' FROM books
+JOIN titles ON titles.ID = books.title_id
+JOIN borrowings ON borrowings.book_id = books.ID
+JOIN users ON borrowings.user_id = users.ID
+WHERE return_date > exp_ret_date
+ORDER BY days_over DESC
+LIMIT 20
+
+
+zad14:
+
+SELECT titles.title, books.ID, users.name, users.surname, date(borrowings.borrow_date, '+25 days') as 'exp_ret_date', julianday(date('now')) - julianday(date(borrowings.borrow_date, '+25 days')) as 'days_over' FROM books
+JOIN titles ON titles.ID = books.title_id
+JOIN borrowings ON borrowings.book_id = books.ID
+JOIN users ON borrowings.user_id = users.ID
+WHERE return_date IS NULL
+ORDER BY days_over DESC
+LIMIT 10
+
+
+zad15:
+
+SELECT
+    users.*,
+    borrowings.*,
+    AVG(julianday(borrowings.return_date) -
+        julianday(borrowings.borrow_date))
+FROM users
+JOIN borrowings ON users.ID = borrowings.user_id
+GROUP BY users.ID
+
+
+zad16:
+
+SELECT
+    users.surname, users.name,
+    SUM(julianday(return_date) - julianday(borrowings.borrow_date) - 25)
+FROM users
+JOIN borrowings ON borrowings.user_id = users.id
+WHERE (julianday(return_date) - julianday(borrowings.borrow_date)) > 25
+GROUP BY users.ID
+
+SELECT
+    users.surname, users.name,
+	julianday(return_date) - julianday(borrowings.borrow_date) AS nadmiar,
+    SUM(julianday(return_date) - julianday(borrowings.borrow_date) - 25) as 'liczba_dni'
+FROM users
+JOIN borrowings ON borrowings.user_id = users.id
+WHERE nadmiar > 25
+GROUP BY users.ID
+ORDER BY liczba_dni DESC
+
+zad17:
+
+SELECT
+    users.surname, users.name,
+    AVG(julianday(return_date) - julianday(borrowings.borrow_date) - 25)
+FROM users
+JOIN borrowings ON borrowings.user_id = users.id
+WHERE (julianday(return_date) - julianday(borrowings.borrow_date)) > 25
+GROUP BY users.ID
+
+
+zad18:
+
+SELECT
+    titles.title,
+    AVG(julianday(return_date) - julianday(borrow_date)) AS avg_borrow_days
+FROM borrowings
+JOIN books ON borrowings.book_id = books.ID
+JOIN titles ON books.title_id = titles.ID
+GROUP BY titles.ID
+ORDER BY avg_borrow_days DESC
+LIMIT 10
+
+
+zad19:
+
+SELECT
+    titles.title,
+    SUM(julianday(return_date) - julianday(borrow_date)) AS sum_borrow_days
+FROM borrowings
+JOIN books ON borrowings.book_id = books.ID
+JOIN titles ON books.title_id = titles.ID
+GROUP BY titles.ID
+ORDER BY sum_borrow_days DESC
+LIMIT 10
+
+
+zad20:
+
+SELECT
+    titles.title,
+    SUM(
+		CASE 
+			WHEN return_date IS NULL
+				THEN julianday(date('now')) - julianday(borrow_date)
+			ELSE julianday(return_date) - julianday(borrow_date)
+		END
+	) AS sum_borrow_days
+FROM borrowings
+JOIN books ON borrowings.book_id = books.ID
+JOIN titles ON books.title_id = titles.ID
+GROUP BY titles.ID
+ORDER BY sum_borrow_days DESC
+LIMIT 10
+
+
+zad21:
+
+SELECT sum(fine), users.name, users.surname FROM users
+JOIN fines ON fines.user_id = users.id
+GROUP BY users.id
+ORDER BY sum(fine) DESC
+
+zad22:
+
+SELECT
+    users.surname, users.name,
+    SUM(julianday(return_date) - julianday(borrowings.borrow_date) - 25) as dni,
+	SUM(julianday(return_date) - julianday(borrowings.borrow_date) - 25) * 0.5 as 'obciazenie'
+FROM users
+JOIN borrowings ON borrowings.user_id = users.id
+WHERE (julianday(return_date) - julianday(borrowings.borrow_date)) > 25
+GROUP BY users.ID
+
+SELECT
+    users.surname, users.name,
+    SUM(julianday(borrowings.return_date) - julianday(borrowings.borrow_date) - 25) as dni,
+    SUM(
+        CASE
+            WHEN return_date IS NULL
+                THEN julianday('now') - julianday(borrowings.borrow_date) - 25
+            ELSE julianday(return_date) - julianday(borrowings.borrow_date) - 25
+        END
+    ) * 0.5 as obciazenie
+FROM users
+JOIN borrowings ON borrowings.user_id = users.id
+WHERE
+	(julianday(borrowings.return_date) - julianday(borrowings.borrow_date)) > 25
+	OR
+	borrowings.return_date IS NULL AND (julianday('now') - julianday(borrowings.borrow_date) > 25)
+GROUP BY users.ID
+ORDER BY obciazenie DESC
+
+zad25:
+
+SELECT title_id, titles.title, AVG(liczba_wypozyczen)
+FROM
+(
+    SELECT
+        books.ID,
+        books.title_id,
+        COUNT(borrowings.ID) as 'liczba_wypozyczen'
+    FROM books
+    JOIN borrowings ON borrowings.book_id = books.ID
+    GROUP BY books.ID
+)
+JOIN titles ON title_id = titles.ID
+GROUP BY title_id
+
+SELECT
+    authors.name, authors.surname,
+    AVG(liczba_wypozyczen) as 'srednia'
+FROM
+(
+    SELECT
+        titles.author_id,
+        books.title_id,
+        COUNT(borrowings.ID) as 'liczba_wypozyczen'
+    FROM titles
+    JOIN books ON books.title_id = titles.ID
+    JOIN borrowings ON borrowings.book_id = books.ID
+    GROUP BY title_id
+)
+JOIN authors ON author_id = authors.ID
+GROUP BY author_id
+ORDER BY srednia DESC
+
+
+zad27:
+
+SELECT
+    authors.name, authors.surname,
+    AVG(liczba_wypozyczen) as 'srednia'
+FROM
+(
+    SELECT
+        books.title_id as 'title_id',
+        COUNT(borrowings.ID) as 'liczba_wypozyczen'
+    FROM books
+    JOIN borrowings ON borrowings.book_id = books.ID
+    GROUP BY books.id
+)
+JOIN titles ON titles.ID = title_id
+JOIN authors ON titles.author_id = authors.ID
+GROUP BY authors.ID
