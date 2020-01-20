@@ -2,6 +2,25 @@
 
 {% block content %}
     <p>Opublikowano: {{ question.pub_date|date:"Y-m-d H:i" }}</p>
+
+    {% if error_message %}
+        <p><strong>{{ error_message }}</strong></p>
+    {% endif %}
+
+    <!-- `url` złozy sobie adres "/polls/4/vote/" --> <!-- https://facebook.com/zmien_haslo/ -->
+    <form action="{% url 'vote' question.pk %}" method="POST">
+        {% csrf_token %}
+
+    {% for choice in question.choice_set.all %}
+    <label for="choice_{{ forloop.counter }}">
+        <input type="radio" id="choice_{{ forloop.counter }}" name="choice" value="{{ choice.pk }}"> {{ choice.choice_text }}
+    </label>
+    <br>
+    {% endfor %}
+
+        <input type="submit" value="Głosuj!">
+    </form>
+
     <p>Opcje wyboru:</p>
     {% if question.choice_set %}
     <ul>
